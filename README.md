@@ -1,1 +1,1 @@
-#This is a mini project for my wife and myself to rate restaurants
+# My wife and I created this mini project to rate restaurants.
