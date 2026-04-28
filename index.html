@@ -18,6 +18,51 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
 
+  /* ── LOGIN SCREEN ─────────────────────────────────────── */
+  .login-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 2rem 1rem;
+    background: var(--ink);
+  }
+  .login-screen::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(196,154,60,0.04) 40px, rgba(196,154,60,0.04) 41px);
+  }
+  .login-card {
+    background: var(--white); border-radius: 16px; padding: 2.5rem 2rem;
+    width: 100%; max-width: 360px; text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    position: relative;
+  }
+  .login-icon { font-size: 40px; margin-bottom: 1rem; display: block; }
+  .login-card h1 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; }
+  .login-card h1 em { color: var(--gold); font-style: italic; }
+  .login-card p { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+  .login-input {
+    width: 100%; height: 44px; padding: 0 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink);
+    background: var(--cream); outline: none; transition: border-color 0.2s;
+    text-align: center; letter-spacing: 2px; margin-bottom: 12px;
+  }
+  .login-input:focus { border-color: var(--gold); background: var(--white); }
+  .login-input::placeholder { letter-spacing: 0; color: var(--muted); opacity: 0.7; }
+  .login-btn {
+    width: 100%; height: 44px; background: var(--ink); color: var(--cream);
+    border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.15s;
+  }
+  .login-btn:hover { background: #2E2820; }
+  .login-error {
+    font-size: 13px; color: var(--red); margin-top: 10px;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .login-error.show { opacity: 1; }
+
+  /* ── MAIN APP ─────────────────────────────────────────── */
+  .app-screen { display: none; }
+  .app-screen.visible { display: block; }
+
   .site-header { background: var(--ink); color: var(--cream); padding: 2rem 1.5rem 1.5rem; text-align: center; position: relative; overflow: hidden; }
   .site-header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(196,154,60,0.04) 40px, rgba(196,154,60,0.04) 41px); }
   .site-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(24px,5vw,36px); font-weight: 600; letter-spacing: -0.5px; position: relative; }
@@ -122,28 +167,43 @@
 </head>
 <body>
 
-<header class="site-header">
-  <h1>Nosso <em>Diário</em> de Restaurantes</h1>
-  <p>avaliações a dois</p>
-</header>
-
-<div class="container">
-  <div class="toolbar">
-    <input class="search-input" id="searchInput" placeholder="Buscar restaurante..." oninput="render()" />
-    <button class="btn btn-primary" onclick="openModal()">+ Novo</button>
-    <span class="count-badge" id="countBadge"></span>
+<!-- ── TELA DE LOGIN ───────────────────────────────────── -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <span class="login-icon">🍽</span>
+    <h1>Nosso <em>Diário</em></h1>
+    <p>de Restaurantes</p>
+    <input class="login-input" id="loginInput" type="password" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <p class="login-error" id="loginError">Senha incorreta. Tente novamente.</p>
   </div>
-
-  <div class="sync-bar">
-    <div class="sync-dot yellow" id="syncDot"></div>
-    <span id="syncMsg">Conectando ao banco de dados...</span>
-  </div>
-
-  <div class="filter-bar" id="filterBar"></div>
-  <div id="listContainer"></div>
 </div>
 
-<!-- MODAL -->
+<!-- ── APP PRINCIPAL ───────────────────────────────────── -->
+<div class="app-screen" id="appScreen">
+  <header class="site-header">
+    <h1>Nosso <em>Diário</em> de Restaurantes</h1>
+    <p>avaliações a dois</p>
+  </header>
+
+  <div class="container">
+    <div class="toolbar">
+      <input class="search-input" id="searchInput" placeholder="Buscar restaurante..." oninput="render()" />
+      <button class="btn btn-primary" onclick="openModal()">+ Novo</button>
+      <span class="count-badge" id="countBadge"></span>
+    </div>
+
+    <div class="sync-bar">
+      <div class="sync-dot yellow" id="syncDot"></div>
+      <span id="syncMsg">Conectando ao banco de dados...</span>
+    </div>
+
+    <div class="filter-bar" id="filterBar"></div>
+    <div id="listContainer"></div>
+  </div>
+</div>
+
+<!-- ── MODAL ───────────────────────────────────────────── -->
 <div class="modal-overlay" id="modalOverlay" onclick="overlayClick(event)">
   <div class="modal">
     <div class="modal-header">
@@ -204,7 +264,14 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── CONFIGURAÇÕES — altere a senha aqui ──────────────────
+// ATENÇÃO: troque ramboramborambo pela senha que quiser usar
+const APP_PASSWORD   = "ramboramborambo";
+// Token secreto — deve ser igual ao que vai nas regras do Firestore
+// Pode ser qualquer string longa e aleatória; não precisa ser memorável
+const FIRESTORE_TOKEN = "tok_diario_" + btoa("diario-restaurantes:570031633782");
 
 const firebaseConfig = {
   apiKey: "AIzaSyDCKyXe4tGQi0fGNdE0KmnC-L48_-9b9PA",
@@ -233,26 +300,66 @@ let data = [];
 let editId = null;
 let starState = {};
 let activeFilter = '';
+let unsubscribe = null;
 
-function setSyncStatus(state, msg) {
-  document.getElementById('syncDot').className = 'sync-dot ' + state;
-  document.getElementById('syncMsg').textContent = msg;
+// ── LOGIN ─────────────────────────────────────────────────
+const SESSION_KEY = 'diario_auth';
+
+function checkSession() {
+  return sessionStorage.getItem(SESSION_KEY) === 'ok';
 }
 
-// Escuta em tempo real o Firestore
-const q = query(collection(db, 'restaurantes'), orderBy('createdAt', 'desc'));
-onSnapshot(q,
-  snapshot => {
-    data = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-    setSyncStatus('green', `Sincronizado · ${data.length} restaurante${data.length!==1?'s':''}`);
-    render();
-  },
-  err => {
-    console.error(err);
-    setSyncStatus('red', 'Erro de conexão. Verifique as regras do Firestore.');
+window.doLogin = function() {
+  const val = document.getElementById('loginInput').value;
+  const err = document.getElementById('loginError');
+  if (val === APP_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, 'ok');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').classList.add('visible');
+    startFirestore();
+  } else {
+    err.classList.add('show');
+    document.getElementById('loginInput').value = '';
+    document.getElementById('loginInput').focus();
+    setTimeout(() => err.classList.remove('show'), 3000);
   }
-);
+}
 
+// Auto-login se sessão ainda ativa (mesma aba/tab)
+if (checkSession()) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').classList.add('visible');
+  startFirestore();
+}
+
+// ── FIRESTORE ─────────────────────────────────────────────
+function startFirestore() {
+  setSyncStatus('yellow', 'Conectando...');
+  const q = query(
+    collection(db, 'restaurantes'),
+    where('_token', '==', FIRESTORE_TOKEN),
+    orderBy('createdAt', 'desc')
+  );
+  unsubscribe = onSnapshot(q,
+    snapshot => {
+      data = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+      setSyncStatus('green', `Sincronizado · ${data.length} restaurante${data.length!==1?'s':''}`);
+      render();
+    },
+    err => {
+      console.error(err);
+      setSyncStatus('red', 'Erro de conexão. Verifique as regras do Firestore.');
+    }
+  );
+}
+
+function setSyncStatus(state, msg) {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncMsg');
+  if (dot) { dot.className = 'sync-dot ' + state; txt.textContent = msg; }
+}
+
+// ── HELPERS ───────────────────────────────────────────────
 function scoreClass(avg) {
   if (avg === null) return 'score-gray';
   if (avg >= 2.5) return 'score-green';
@@ -270,21 +377,24 @@ function calcAvg(criterios) {
   return vals.reduce((a,b)=>a+b,0)/vals.length;
 }
 
+// ── RENDER ────────────────────────────────────────────────
 window.render = function() {
-  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const q = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
   const types = [...new Set(data.map(r => r.tipo).filter(Boolean))].sort();
 
   const fb = document.getElementById('filterBar');
-  fb.innerHTML = `<button class="filter-chip${!activeFilter?' active':''}" onclick="setFilter('')">Todos</button>` +
+  if (fb) fb.innerHTML = `<button class="filter-chip${!activeFilter?' active':''}" onclick="setFilter('')">Todos</button>` +
     types.map(t => `<button class="filter-chip${activeFilter===t?' active':''}" onclick="setFilter('${t}')">${t}</button>`).join('');
 
   let list = [...data];
   if (q) list = list.filter(r => r.nome?.toLowerCase().includes(q) || (r.local||'').toLowerCase().includes(q) || (r.tipo||'').toLowerCase().includes(q));
   if (activeFilter) list = list.filter(r => r.tipo === activeFilter);
 
-  document.getElementById('countBadge').textContent = data.length ? `${data.length} restaurante${data.length!==1?'s':''}` : '';
+  const badge = document.getElementById('countBadge');
+  if (badge) badge.textContent = data.length ? `${data.length} restaurante${data.length!==1?'s':''}` : '';
 
   const cont = document.getElementById('listContainer');
+  if (!cont) return;
   if (list.length === 0) {
     cont.innerHTML = `<div class="empty">
       <span class="empty-icon">${q||activeFilter?'🔍':'🍽'}</span>
@@ -313,8 +423,7 @@ window.render = function() {
           <div class="card-meta">${metaTags}</div>
         </div>
         <div class="score-circle ${scoreClass(avg)}">
-          <span class="num">${avgStr}</span>
-          <span class="den">/3</span>
+          <span class="num">${avgStr}</span><span class="den">/3</span>
         </div>
       </div>
       ${critsHTML ? `<div class="card-criteria">${critsHTML}</div>` : ''}
@@ -328,6 +437,7 @@ window.render = function() {
 
 window.setFilter = function(t) { activeFilter = t; render(); }
 
+// ── MODAL ─────────────────────────────────────────────────
 window.openModal = function(r) {
   editId = r ? r.firestoreId : null;
   document.getElementById('modalTitle').textContent = r ? 'Editar avaliação' : 'Novo restaurante';
@@ -340,27 +450,24 @@ window.openModal = function(r) {
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 window.closeModal = function() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
   editId = null;
 }
-
 window.overlayClick = function(e) {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
 }
-
 window.editEntry = function(id) {
   const r = data.find(x => x.firestoreId === id);
   if (r) openModal(r);
 }
-
 window.deleteEntry = async function(id) {
   if (!confirm('Excluir esta avaliação?')) return;
   await deleteDoc(doc(db, 'restaurantes', id));
 }
 
+// ── CRITERIA FORM ─────────────────────────────────────────
 function buildCritGrid(existing) {
   const grid = document.getElementById('critGrid');
   starState = {};
@@ -379,7 +486,6 @@ function buildCritGrid(existing) {
     </div>`;
   }).join('');
 }
-
 window.setStar = function(id, val) {
   starState[id] = val;
   document.getElementById('picker-'+id).querySelectorAll('.star-btn').forEach((btn,i) => {
@@ -387,10 +493,10 @@ window.setStar = function(id, val) {
   });
 }
 
+// ── SAVE ──────────────────────────────────────────────────
 window.saveEntry = async function() {
   const nome = document.getElementById('fNome').value.trim();
   if (!nome) { document.getElementById('fNome').focus(); alert('Informe o nome do restaurante.'); return; }
-
   setSyncStatus('yellow', 'Salvando...');
   const criterios = {};
   CRITERIOS.forEach(c => {
@@ -398,7 +504,6 @@ window.saveEntry = async function() {
     const comment = document.getElementById('cc-'+c.id)?.value.trim() || '';
     if (score || comment) criterios[c.id] = { score, comment };
   });
-
   const entry = {
     nome,
     local: document.getElementById('fLocal').value.trim(),
@@ -406,9 +511,9 @@ window.saveEntry = async function() {
     data: document.getElementById('fData').value,
     quem: document.getElementById('fQuem').value,
     criterios,
+    _token: FIRESTORE_TOKEN,
     updatedAt: Date.now(),
   };
-
   try {
     if (editId) {
       await updateDoc(doc(db, 'restaurantes', editId), entry);
