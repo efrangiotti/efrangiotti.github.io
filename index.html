@@ -6,168 +6,224 @@
 <title>🍽 Nosso Diário de Restaurantes</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --cream: #FAF7F2; --ink: #1A1612; --muted: #7A6E65; --border: #E0D9D0;
-    --gold: #C49A3C; --gold-light: #F5EDD6;
-    --green: #2D6A4F; --green-light: #D8EDDF;
-    --red: #8B2020; --red-light: #F5DADA;
-    --amber: #8B5E00; --amber-light: #FFF0CC;
-    --white: #FFFFFF;
-    --card-shadow: 0 1px 3px rgba(26,22,18,0.08), 0 4px 16px rgba(26,22,18,0.04);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+/* ── TEMAS ──────────────────────────────────────────────── */
+:root, [data-theme="classico"] {
+  --bg: #FAF7F2; --ink: #1A1612; --muted: #7A6E65; --border: #E0D9D0;
+  --accent: #C49A3C; --accent-light: #F5EDD6;
+  --card-bg: #FFFFFF; --header-bg: #1A1612; --header-text: #FAF7F2;
+  --chip-bg: #FFFFFF; --chip-active-bg: #1A1612; --chip-active-text: #FAF7F2;
+  --green: #2D6A4F; --green-light: #D8EDDF;
+  --red: #8B2020; --red-light: #F5DADA;
+  --amber: #8B5E00; --amber-light: #FFF0CC;
+  --card-shadow: 0 1px 3px rgba(26,22,18,0.08), 0 4px 16px rgba(26,22,18,0.04);
+  --login-bg: #1A1612;
+}
+[data-theme="noite"] {
+  --bg: #0F0F13; --ink: #E8E4DF; --muted: #8A8480; --border: #2A2825;
+  --accent: #E8A020; --accent-light: #2A2010;
+  --card-bg: #1A1A1F; --header-bg: #111114; --header-text: #E8E4DF;
+  --chip-bg: #1A1A1F; --chip-active-bg: #E8A020; --chip-active-text: #111;
+  --green: #4CAF79; --green-light: #0D2B1A;
+  --red: #E05555; --red-light: #2B0D0D;
+  --amber: #E8A020; --amber-light: #2A2010;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+  --login-bg: #0F0F13;
+}
+[data-theme="verde"] {
+  --bg: #F0F5F0; --ink: #1A2E1A; --muted: #5A7A5A; --border: #C8DCC8;
+  --accent: #2D6A4F; --accent-light: #D8EDDF;
+  --card-bg: #FFFFFF; --header-bg: #1A3A2A; --header-text: #F0F5F0;
+  --chip-bg: #FFFFFF; --chip-active-bg: #2D6A4F; --chip-active-text: #FFFFFF;
+  --green: #2D6A4F; --green-light: #D8EDDF;
+  --red: #8B2020; --red-light: #F5DADA;
+  --amber: #7A5A00; --amber-light: #FFF0CC;
+  --card-shadow: 0 1px 3px rgba(26,46,26,0.08), 0 4px 16px rgba(26,46,26,0.05);
+  --login-bg: #1A3A2A;
+}
+[data-theme="rosé"] {
+  --bg: #FDF5F5; --ink: #2A1A1A; --muted: #8A6A6A; --border: #EDD5D5;
+  --accent: #B05070; --accent-light: #FAE8EE;
+  --card-bg: #FFFFFF; --header-bg: #3A1525; --header-text: #FDF5F5;
+  --chip-bg: #FFFFFF; --chip-active-bg: #B05070; --chip-active-text: #FFFFFF;
+  --green: #2D6A4F; --green-light: #D8EDDF;
+  --red: #8B2020; --red-light: #F5DADA;
+  --amber: #8B5E00; --amber-light: #FFF0CC;
+  --card-shadow: 0 1px 3px rgba(42,26,26,0.08), 0 4px 16px rgba(42,26,26,0.05);
+  --login-bg: #3A1525;
+}
 
-  /* ── LOGIN SCREEN ─────────────────────────────────────── */
-  .login-screen {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 2rem 1rem;
-    background: var(--ink);
-  }
-  .login-screen::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none;
-    background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(196,154,60,0.04) 40px, rgba(196,154,60,0.04) 41px);
-  }
-  .login-card {
-    background: var(--white); border-radius: 16px; padding: 2.5rem 2rem;
-    width: 100%; max-width: 360px; text-align: center;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
-    position: relative;
-  }
-  .login-icon { font-size: 40px; margin-bottom: 1rem; display: block; }
-  .login-card h1 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; }
-  .login-card h1 em { color: var(--gold); font-style: italic; }
-  .login-card p { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
-  .login-input {
-    width: 100%; height: 44px; padding: 0 14px;
-    border: 1px solid var(--border); border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink);
-    background: var(--cream); outline: none; transition: border-color 0.2s;
-    text-align: center; letter-spacing: 2px; margin-bottom: 12px;
-  }
-  .login-input:focus { border-color: var(--gold); background: var(--white); }
-  .login-input::placeholder { letter-spacing: 0; color: var(--muted); opacity: 0.7; }
-  .login-btn {
-    width: 100%; height: 44px; background: var(--ink); color: var(--cream);
-    border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
-    font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.15s;
-  }
-  .login-btn:hover { background: #2E2820; }
-  .login-error {
-    font-size: 13px; color: var(--red); margin-top: 10px;
-    opacity: 0; transition: opacity 0.2s;
-  }
-  .login-error.show { opacity: 1; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; transition: background 0.3s, color 0.3s; }
 
-  /* ── MAIN APP ─────────────────────────────────────────── */
-  .app-screen { display: none; }
-  .app-screen.visible { display: block; }
+/* ── LOGIN ──────────────────────────────────────────────── */
+.login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; background: var(--login-bg); }
+.login-card { background: var(--card-bg); border-radius: 16px; padding: 2.5rem 2rem; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.35); }
+.login-icon { font-size: 40px; margin-bottom: 1rem; display: block; }
+.login-card h1 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; color: var(--ink); }
+.login-card h1 em { color: var(--accent); font-style: italic; }
+.login-card p { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+.login-input { width: 100%; height: 44px; padding: 0 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink); background: var(--bg); outline: none; transition: border-color 0.2s; text-align: center; letter-spacing: 2px; margin-bottom: 12px; }
+.login-input:focus { border-color: var(--accent); }
+.login-input::placeholder { letter-spacing: 0; color: var(--muted); opacity: 0.7; }
+.login-btn { width: 100%; height: 44px; background: var(--ink); color: var(--card-bg); border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+.login-btn:hover { opacity: 0.85; }
+.login-error { font-size: 13px; color: var(--red); margin-top: 10px; opacity: 0; transition: opacity 0.2s; }
+.login-error.show { opacity: 1; }
 
-  .site-header { background: var(--ink); color: var(--cream); padding: 2rem 1.5rem 1.5rem; text-align: center; position: relative; overflow: hidden; }
-  .site-header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(196,154,60,0.04) 40px, rgba(196,154,60,0.04) 41px); }
-  .site-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(24px,5vw,36px); font-weight: 600; letter-spacing: -0.5px; position: relative; }
-  .site-header h1 em { color: var(--gold); font-style: italic; }
-  .site-header p { font-size: 13px; color: rgba(250,247,242,0.5); margin-top: 4px; letter-spacing: 0.5px; text-transform: uppercase; position: relative; }
+/* ── APP ────────────────────────────────────────────────── */
+.app-screen { display: none; }
+.app-screen.visible { display: block; }
 
-  .container { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.site-header { background: var(--header-bg); color: var(--header-text); padding: 1.5rem 1.5rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; position: relative; overflow: hidden; }
+.site-header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px); pointer-events: none; }
+.header-title { position: relative; }
+.header-title h1 { font-family: 'Playfair Display', serif; font-size: clamp(20px,4vw,30px); font-weight: 600; letter-spacing: -0.5px; }
+.header-title h1 em { color: var(--accent); font-style: italic; }
+.header-title p { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
+.theme-picker { display: flex; gap: 6px; position: relative; z-index: 1; flex-shrink: 0; }
+.theme-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.15s, border-color 0.15s; }
+.theme-dot:hover { transform: scale(1.15); }
+.theme-dot.active { border-color: rgba(255,255,255,0.8); }
+.theme-dot[data-t="classico"] { background: linear-gradient(135deg,#C49A3C,#1A1612); }
+.theme-dot[data-t="noite"]    { background: linear-gradient(135deg,#E8A020,#0F0F13); }
+.theme-dot[data-t="verde"]    { background: linear-gradient(135deg,#2D6A4F,#F0F5F0); }
+.theme-dot[data-t="rosé"]     { background: linear-gradient(135deg,#B05070,#FDF5F5); }
 
-  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
-  .search-input { flex: 1; min-width: 180px; height: 40px; padding: 0 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.2s; }
-  .search-input:focus { border-color: var(--gold); }
-  .search-input::placeholder { color: var(--muted); }
-  .btn { height: 40px; padding: 0 18px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap; }
-  .btn-primary { background: var(--ink); color: var(--cream); }
-  .btn-primary:hover { background: #2E2820; }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
-  .btn-gold { background: var(--gold); color: var(--white); }
-  .btn-gold:hover { background: #B08830; }
-  .count-badge { font-size: 13px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+.container { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
 
-  .sync-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 1rem; padding: 8px 12px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .sync-dot.green { background: #2D6A4F; }
-  .sync-dot.yellow { background: #C49A3C; animation: pulse 1s infinite; }
-  .sync-dot.red { background: #8B2020; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+/* TOOLBAR */
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 160px; height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.2s; }
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--muted); }
+.btn { height: 38px; padding: 0 16px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap; }
+.btn-primary { background: var(--ink); color: var(--card-bg); }
+.btn-primary:hover { opacity: 0.85; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+.btn-gold { background: var(--accent); color: #fff; }
+.btn-gold:hover { opacity: 0.9; }
 
-  .empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
-  .empty-icon { font-size: 48px; margin-bottom: 1rem; display: block; }
-  .empty h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 0.5rem; }
-  .empty p { font-size: 14px; line-height: 1.6; max-width: 300px; margin: 0 auto; }
+/* SORT + FILTER */
+.controls { display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; }
+.sort-select { height: 30px; padding: 0 10px; border: 1px solid var(--border); border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); background: var(--chip-bg); cursor: pointer; outline: none; }
+.sort-select:focus { border-color: var(--accent); }
+.filter-chip { height: 30px; padding: 0 14px; border-radius: 20px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border); background: var(--chip-bg); color: var(--muted); transition: all 0.15s; }
+.filter-chip.active { background: var(--chip-active-bg); color: var(--chip-active-text); border-color: var(--chip-active-bg); }
 
-  .rest-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 1rem; overflow: hidden; animation: fadeUp 0.3s ease both; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  .card-top { padding: 1.25rem 1.25rem 1rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-  .card-info h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  .meta-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
-  .score-circle { width: 56px; height: 56px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid; }
-  .score-circle .num { font-size: 18px; font-weight: 500; line-height: 1; }
-  .score-circle .den { font-size: 10px; opacity: 0.7; }
-  .score-green { border-color: var(--green); color: var(--green); background: var(--green-light); }
-  .score-amber { border-color: var(--amber); color: var(--amber); background: var(--amber-light); }
-  .score-red   { border-color: var(--red);   color: var(--red);   background: var(--red-light); }
-  .score-gray  { border-color: var(--border); color: var(--muted); background: var(--cream); }
+/* SYNC */
+.sync-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 0.75rem; padding: 7px 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.sync-dot.green { background: var(--green); }
+.sync-dot.yellow { background: var(--accent); animation: pulse 1s infinite; }
+.sync-dot.red { background: var(--red); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  .card-criteria { padding: 0 1.25rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-  .crit-item { background: var(--cream); border-radius: 8px; padding: 10px 12px; border: 1px solid var(--border); }
-  .crit-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
-  .stars-row { display: flex; gap: 3px; margin-bottom: 4px; }
-  .star { font-size: 14px; line-height: 1; }
-  .crit-note { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.4; }
-  .card-actions { display: flex; gap: 8px; padding: 10px 1.25rem; border-top: 1px solid var(--border); background: var(--cream); }
-  .btn-sm { height: 30px; padding: 0 12px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--muted); transition: all 0.15s; }
-  .btn-sm:hover { border-color: var(--ink); color: var(--ink); }
-  .btn-sm.danger:hover { border-color: var(--red); color: var(--red); }
+/* EMPTY */
+.empty { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.empty-icon { font-size: 48px; margin-bottom: 1rem; display: block; }
+.empty h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 0.5rem; }
+.empty p { font-size: 14px; line-height: 1.6; max-width: 300px; margin: 0 auto; }
 
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,22,18,0.6); z-index: 100; overflow-y: auto; padding: 2rem 1rem; }
-  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
-  .modal { background: var(--white); border-radius: 16px; width: 100%; max-width: 600px; box-shadow: 0 20px 60px rgba(26,22,18,0.25); animation: modalIn 0.25s ease; }
-  @keyframes modalIn { from{opacity:0;transform:translateY(16px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
-  .modal-header { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 20px; }
-  .modal-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 18px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .modal-close:hover { background: var(--cream); color: var(--ink); }
-  .modal-body { padding: 1.5rem; }
-  .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+/* CARD */
+.rest-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 0.875rem; overflow: hidden; animation: fadeUp 0.25s ease both; transition: background 0.3s, border-color 0.3s; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-  .form-section { margin-bottom: 1.5rem; }
-  .form-section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .form-row.single { grid-template-columns: 1fr; }
-  .form-field { display: flex; flex-direction: column; gap: 4px; }
-  .form-field label { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .form-input, .form-select { height: 38px; padding: 0 12px; border: 1px solid var(--border); border-radius: 7px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: var(--white); outline: none; transition: border-color 0.2s; }
-  .form-input:focus, .form-select:focus { border-color: var(--gold); }
-  .form-input::placeholder { color: var(--muted); opacity: 0.6; }
+.card-summary { padding: 1rem 1.1rem; display: flex; align-items: center; gap: 0.875rem; cursor: pointer; user-select: none; }
+.card-summary:hover { background: rgba(128,128,128,0.04); }
+.card-info { flex: 1; min-width: 0; }
+.card-info h2 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-meta { display: flex; flex-wrap: wrap; gap: 5px; }
+.meta-tag { font-size: 11px; padding: 2px 7px; border-radius: 20px; background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
 
-  .crit-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-  .crit-form-item { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-  .crit-form-label { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
-  .star-picker { display: flex; gap: 4px; margin-bottom: 8px; }
-  .star-btn { width: 32px; height: 32px; font-size: 18px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; line-height: 1; }
-  .star-btn.on { background: var(--gold-light); border-color: var(--gold); }
-  .star-btn:hover { transform: scale(1.1); }
-  .clear-btn { font-size: 11px; border: none; background: none; color: var(--muted); cursor: pointer; text-decoration: underline; padding: 0; font-family: 'DM Sans', sans-serif; }
-  .crit-comment-input { width: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink); background: var(--white); outline: none; resize: none; transition: border-color 0.2s; height: 52px; margin-top: 6px; }
-  .crit-comment-input:focus { border-color: var(--gold); }
-  .crit-comment-input::placeholder { color: var(--muted); opacity: 0.6; }
+.score-circle { width: 50px; height: 50px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid; }
+.score-circle .num { font-size: 16px; font-weight: 500; line-height: 1; }
+.score-circle .den { font-size: 10px; opacity: 0.7; }
+.score-green { border-color: var(--green); color: var(--green); background: var(--green-light); }
+.score-amber { border-color: var(--amber); color: var(--amber); background: var(--amber-light); }
+.score-red   { border-color: var(--red);   color: var(--red);   background: var(--red-light); }
+.score-gray  { border-color: var(--border); color: var(--muted); background: var(--bg); }
 
-  .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
-  .filter-chip { height: 30px; padding: 0 14px; border-radius: 20px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--muted); transition: all 0.15s; }
-  .filter-chip.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.chevron { font-size: 12px; color: var(--muted); flex-shrink: 0; transition: transform 0.2s; }
+.chevron.open { transform: rotate(180deg); }
 
-  @media (max-width: 500px) {
-    .form-row { grid-template-columns: 1fr; }
-    .crit-form-grid { grid-template-columns: 1fr; }
-    .card-criteria { grid-template-columns: repeat(2, 1fr); }
-  }
+/* CARD DETAILS (colapsável) */
+.card-details { display: none; border-top: 1px solid var(--border); }
+.card-details.open { display: block; }
+
+.card-links { display: flex; gap: 8px; padding: 0.75rem 1.1rem 0; flex-wrap: wrap; }
+.link-btn { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 12px; border-radius: 20px; font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 500; text-decoration: none; border: 1px solid var(--border); color: var(--muted); background: var(--bg); transition: all 0.15s; }
+.link-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.photo-strip { display: flex; gap: 8px; padding: 0.75rem 1.1rem 0; overflow-x: auto; }
+.photo-thumb { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; cursor: pointer; transition: opacity 0.15s; }
+.photo-thumb:hover { opacity: 0.85; }
+.photo-link-tag { display: inline-flex; align-items: center; gap: 5px; height: 80px; padding: 0 14px; border-radius: 8px; border: 1px dashed var(--border); font-size: 12px; color: var(--muted); text-decoration: none; flex-shrink: 0; white-space: nowrap; }
+.photo-link-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+.card-criteria { padding: 0.75rem 1.1rem 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 7px; }
+.crit-item { background: var(--bg); border-radius: 8px; padding: 9px 11px; border: 1px solid var(--border); }
+.crit-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.stars-row { display: flex; gap: 3px; margin-bottom: 3px; }
+.star { font-size: 13px; line-height: 1; }
+.crit-note { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.4; }
+
+.card-actions { display: flex; gap: 8px; padding: 8px 1.1rem; border-top: 1px solid var(--border); background: var(--bg); }
+.btn-sm { height: 28px; padding: 0 11px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: var(--muted); transition: all 0.15s; }
+.btn-sm:hover { border-color: var(--ink); color: var(--ink); }
+.btn-sm.danger:hover { border-color: var(--red); color: var(--red); }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100; overflow-y: auto; padding: 2rem 1rem; }
+.modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+.modal { background: var(--card-bg); border-radius: 16px; width: 100%; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: modalIn 0.22s ease; color: var(--ink); }
+@keyframes modalIn { from{opacity:0;transform:translateY(14px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+.modal-header { padding: 1.25rem 1.25rem 0.875rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { font-family: 'Playfair Display', serif; font-size: 19px; color: var(--ink); }
+.modal-close { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 17px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.modal-close:hover { background: var(--bg); color: var(--ink); }
+.modal-body { padding: 1.25rem; }
+.modal-footer { padding: 0.875rem 1.25rem; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+.form-section { margin-bottom: 1.25rem; }
+.form-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 9px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.form-row.single { grid-template-columns: 1fr; }
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.form-input, .form-select { height: 37px; padding: 0 11px; border: 1px solid var(--border); border-radius: 7px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--card-bg); outline: none; transition: border-color 0.2s; }
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--muted); opacity: 0.6; }
+
+.crit-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 10px; }
+.crit-form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 11px; }
+.crit-form-label { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 7px; }
+.star-picker { display: flex; gap: 4px; }
+.star-btn { width: 30px; height: 30px; font-size: 17px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
+.star-btn.on { background: var(--accent-light); border-color: var(--accent); }
+.star-btn:hover { transform: scale(1.1); }
+.clear-btn { font-size: 11px; border: none; background: none; color: var(--muted); cursor: pointer; text-decoration: underline; padding: 0 0 0 4px; font-family: 'DM Sans', sans-serif; }
+.crit-comment-input { width: 100%; padding: 6px 9px; border: 1px solid var(--border); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink); background: var(--card-bg); outline: none; resize: none; height: 48px; margin-top: 7px; transition: border-color 0.2s; }
+.crit-comment-input:focus { border-color: var(--accent); }
+.crit-comment-input::placeholder { color: var(--muted); opacity: 0.6; }
+
+/* LIGHTBOX */
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+.lightbox-close { position: absolute; top: 1rem; right: 1rem; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+@media (max-width: 500px) {
+  .form-row { grid-template-columns: 1fr; }
+  .crit-form-grid { grid-template-columns: 1fr; }
+  .card-criteria { grid-template-columns: repeat(2, 1fr); }
+  .theme-picker { gap: 4px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ── TELA DE LOGIN ───────────────────────────────────── -->
+<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <span class="login-icon">🍽</span>
@@ -179,31 +235,33 @@
   </div>
 </div>
 
-<!-- ── APP PRINCIPAL ───────────────────────────────────── -->
+<!-- APP -->
 <div class="app-screen" id="appScreen">
   <header class="site-header">
-    <h1>Nosso <em>Diário</em> de Restaurantes</h1>
-    <p>avaliações a dois</p>
+    <div class="header-title">
+      <h1>Nosso <em>Diário</em> de Restaurantes</h1>
+      <p>avaliações a dois</p>
+    </div>
+    <div class="theme-picker" id="themePicker"></div>
   </header>
 
   <div class="container">
     <div class="toolbar">
       <input class="search-input" id="searchInput" placeholder="Buscar restaurante..." oninput="render()" />
       <button class="btn btn-primary" onclick="openModal()">+ Novo</button>
-      <span class="count-badge" id="countBadge"></span>
     </div>
 
     <div class="sync-bar">
       <div class="sync-dot yellow" id="syncDot"></div>
-      <span id="syncMsg">Conectando ao banco de dados...</span>
+      <span id="syncMsg">Conectando...</span>
     </div>
 
-    <div class="filter-bar" id="filterBar"></div>
+    <div class="controls" id="controls"></div>
     <div id="listContainer"></div>
   </div>
 </div>
 
-<!-- ── MODAL ───────────────────────────────────────────── -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="overlayClick(event)">
   <div class="modal">
     <div class="modal-header">
@@ -213,42 +271,42 @@
     <div class="modal-body">
       <div class="form-section">
         <h3>Informações gerais</h3>
-        <div class="form-row single">
-          <div class="form-field">
-            <label>Nome do restaurante *</label>
-            <input class="form-input" id="fNome" placeholder="Ex: Restaurante do João" />
-          </div>
-        </div>
+        <div class="form-row single"><div class="form-field">
+          <label>Nome do restaurante *</label>
+          <input class="form-input" id="fNome" placeholder="Ex: Trattoria do Bairro" />
+        </div></div>
         <div class="form-row">
-          <div class="form-field">
-            <label>Cidade / Bairro</label>
-            <input class="form-input" id="fLocal" placeholder="Ex: Pinheiros, SP" />
-          </div>
-          <div class="form-field">
-            <label>Tipo de cozinha</label>
+          <div class="form-field"><label>Cidade / Bairro</label><input class="form-input" id="fLocal" placeholder="Ex: Pinheiros, SP" /></div>
+          <div class="form-field"><label>Tipo de cozinha</label>
             <select class="form-select" id="fTipo">
               <option value="">Selecione...</option>
               <option>Brasileira</option><option>Italiana</option><option>Japonesa</option>
               <option>Pizza</option><option>Churrasco</option><option>Frutos do Mar</option>
               <option>Árabe</option><option>Mexicana</option><option>Contemporânea</option>
-              <option>Francesa</option><option>Peruana</option><option>Hamburgueria</option>
-              <option>Outro</option>
+              <option>Francesa</option><option>Peruana</option><option>Hamburgueria</option><option>Outro</option>
             </select>
           </div>
         </div>
         <div class="form-row">
-          <div class="form-field">
-            <label>Data da visita</label>
-            <input class="form-input" id="fData" type="date" />
-          </div>
-          <div class="form-field">
-            <label>Quem avaliou</label>
+          <div class="form-field"><label>Data da visita</label><input class="form-input" id="fData" type="date" /></div>
+          <div class="form-field"><label>Quem avaliou</label>
             <select class="form-select" id="fQuem">
               <option value="">Selecione...</option>
               <option>Nós dois</option><option>Só eu</option><option>Só ela</option>
             </select>
           </div>
         </div>
+      </div>
+      <div class="form-section">
+        <h3>Links e fotos</h3>
+        <div class="form-row">
+          <div class="form-field"><label>📍 Google Maps (link)</label><input class="form-input" id="fMaps" placeholder="https://maps.google.com/..." /></div>
+          <div class="form-field"><label>🧭 Waze (link)</label><input class="form-input" id="fWaze" placeholder="https://waze.com/ul/..." /></div>
+        </div>
+        <div class="form-row single"><div class="form-field">
+          <label>📷 Fotos (links do Google Fotos ou Drive, um por linha)</label>
+          <textarea class="crit-comment-input" id="fFotos" style="height:70px" placeholder="https://photos.google.com/...&#10;https://drive.google.com/..."></textarea>
+        </div></div>
       </div>
       <div class="form-section">
         <h3>Avaliações (0 a ★★★)</h3>
@@ -262,15 +320,17 @@
   </div>
 </div>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightboxImg" src="" alt="" />
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── CONFIGURAÇÕES — altere a senha aqui ──────────────────
-// ATENÇÃO: troque ramboramborambo pela senha que quiser usar
-const APP_PASSWORD   = "ramboramborambo";
-// Token secreto — deve ser igual ao que vai nas regras do Firestore
-// Pode ser qualquer string longa e aleatória; não precisa ser memorável
+const APP_PASSWORD    = "ramboramborambo";
 const FIRESTORE_TOKEN = "tok_diario_" + btoa("diario-restaurantes:570031633782");
 
 const firebaseConfig = {
@@ -286,36 +346,39 @@ const fireApp = initializeApp(firebaseConfig);
 const db = getFirestore(fireApp);
 
 const CRITERIOS = [
-  {id:'comida',label:'🍴 Comida'},
-  {id:'atendimento',label:'🙋 Atendimento'},
-  {id:'espera',label:'⏱ Espera'},
-  {id:'preco',label:'💰 Preço/Custo-benefício'},
-  {id:'ambiente',label:'✨ Ambiente'},
-  {id:'sobremesa',label:'🍮 Sobremesa'},
-  {id:'estacionamento',label:'🚗 Estacionamento'},
-  {id:'bebidas',label:'🍷 Bebidas'},
+  {id:'comida',label:'🍴 Comida'},{id:'atendimento',label:'🙋 Atendimento'},
+  {id:'espera',label:'⏱ Espera'},{id:'preco',label:'💰 Preço/Custo-benefício'},
+  {id:'ambiente',label:'✨ Ambiente'},{id:'sobremesa',label:'🍮 Sobremesa'},
+  {id:'estacionamento',label:'🚗 Estacionamento'},{id:'bebidas',label:'🍷 Bebidas'},
 ];
 
-let data = [];
-let editId = null;
-let starState = {};
-let activeFilter = '';
-let unsubscribe = null;
+const THEMES = ['classico','noite','verde','rosé'];
+
+let data = [], editId = null, starState = {}, activeFilter = '', sortMode = 'recentes';
+let expandedIds = new Set();
+
+// ── TEMA ─────────────────────────────────────────────────
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('diario_theme', t);
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === t));
+}
+function buildThemePicker() {
+  const p = document.getElementById('themePicker');
+  p.innerHTML = THEMES.map(t => `<div class="theme-dot${document.documentElement.getAttribute('data-theme')===t?' active':''}" data-t="${t}" title="${t}" onclick="setTheme('${t}')"></div>`).join('');
+}
+window.setTheme = t => applyTheme(t);
+applyTheme(localStorage.getItem('diario_theme') || 'classico');
 
 // ── LOGIN ─────────────────────────────────────────────────
-const SESSION_KEY = 'diario_auth';
-
-function checkSession() {
-  return sessionStorage.getItem(SESSION_KEY) === 'ok';
-}
-
 window.doLogin = function() {
   const val = document.getElementById('loginInput').value;
   const err = document.getElementById('loginError');
   if (val === APP_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, 'ok');
+    sessionStorage.setItem('diario_auth','ok');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appScreen').classList.add('visible');
+    buildThemePicker();
     startFirestore();
   } else {
     err.classList.add('show');
@@ -324,146 +387,164 @@ window.doLogin = function() {
     setTimeout(() => err.classList.remove('show'), 3000);
   }
 }
-
-// Auto-login se sessão ainda ativa (mesma aba/tab)
-if (checkSession()) {
+if (sessionStorage.getItem('diario_auth') === 'ok') {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appScreen').classList.add('visible');
+  buildThemePicker();
   startFirestore();
 }
 
 // ── FIRESTORE ─────────────────────────────────────────────
 function startFirestore() {
-  setSyncStatus('yellow', 'Conectando...');
-  const q = query(
-    collection(db, 'restaurantes'),
-    orderBy('createdAt', 'desc')
-  );
-  unsubscribe = onSnapshot(q,
-    snapshot => {
-      data = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-      setSyncStatus('green', `Sincronizado · ${data.length} restaurante${data.length!==1?'s':''}`);
+  setSyncStatus('yellow','Conectando...');
+  const q = query(collection(db,'restaurantes'), orderBy('createdAt','desc'));
+  onSnapshot(q,
+    snap => {
+      data = snap.docs.map(d => ({firestoreId: d.id, ...d.data()}));
+      setSyncStatus('green',`Sincronizado · ${data.length} restaurante${data.length!==1?'s':''}`);
       render();
     },
-    err => {
-      console.error(err);
-      setSyncStatus('red', 'Erro de conexão. Verifique as regras do Firestore.');
-    }
+    err => { console.error(err); setSyncStatus('red','Erro de conexão.'); }
   );
 }
-
-function setSyncStatus(state, msg) {
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncMsg');
-  if (dot) { dot.className = 'sync-dot ' + state; txt.textContent = msg; }
+function setSyncStatus(s,m) {
+  const dot = document.getElementById('syncDot'), txt = document.getElementById('syncMsg');
+  if(dot){dot.className='sync-dot '+s; txt.textContent=m;}
 }
 
 // ── HELPERS ───────────────────────────────────────────────
-function scoreClass(avg) {
-  if (avg === null) return 'score-gray';
-  if (avg >= 2.5) return 'score-green';
-  if (avg >= 1.5) return 'score-amber';
-  return 'score-red';
-}
-function starsHTML(score) {
-  let s = '';
-  for (let i = 1; i <= 3; i++) s += `<span class="star">${i <= score ? '★' : '☆'}</span>`;
-  return s;
-}
-function calcAvg(criterios) {
-  const vals = Object.values(criterios || {}).map(c => c.score).filter(s => s > 0);
-  if (!vals.length) return null;
-  return vals.reduce((a,b)=>a+b,0)/vals.length;
+const scoreClass = avg => avg===null?'score-gray':avg>=2.5?'score-green':avg>=1.5?'score-amber':'score-red';
+const starsHTML  = s => [1,2,3].map(i=>`<span class="star">${i<=s?'★':'☆'}</span>`).join('');
+function calcAvg(cr) {
+  const v = Object.values(cr||{}).map(c=>c.score).filter(s=>s>0);
+  return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
 }
 
 // ── RENDER ────────────────────────────────────────────────
 window.render = function() {
-  const q = document.getElementById('searchInput')?.value.toLowerCase().trim() || '';
-  const types = [...new Set(data.map(r => r.tipo).filter(Boolean))].sort();
+  const q = document.getElementById('searchInput')?.value.toLowerCase().trim()||'';
+  const types = [...new Set(data.map(r=>r.tipo).filter(Boolean))].sort();
 
-  const fb = document.getElementById('filterBar');
-  if (fb) fb.innerHTML = `<button class="filter-chip${!activeFilter?' active':''}" onclick="setFilter('')">Todos</button>` +
-    types.map(t => `<button class="filter-chip${activeFilter===t?' active':''}" onclick="setFilter('${t}')">${t}</button>`).join('');
+  // controls
+  const ctrl = document.getElementById('controls');
+  if(ctrl) ctrl.innerHTML =
+    `<select class="sort-select" onchange="setSort(this.value)">
+      <option value="recentes" ${sortMode==='recentes'?'selected':''}>↓ Mais recentes</option>
+      <option value="nota"     ${sortMode==='nota'    ?'selected':''}>↓ Maior nota</option>
+      <option value="az"       ${sortMode==='az'      ?'selected':''}>A → Z</option>
+    </select>` +
+    `<button class="filter-chip${!activeFilter?' active':''}" onclick="setFilter('')">Todos</button>` +
+    types.map(t=>`<button class="filter-chip${activeFilter===t?' active':''}" onclick="setFilter('${t}')">${t}</button>`).join('');
 
   let list = [...data];
-  if (q) list = list.filter(r => r.nome?.toLowerCase().includes(q) || (r.local||'').toLowerCase().includes(q) || (r.tipo||'').toLowerCase().includes(q));
-  if (activeFilter) list = list.filter(r => r.tipo === activeFilter);
+  if(q) list = list.filter(r=>r.nome?.toLowerCase().includes(q)||(r.local||'').toLowerCase().includes(q)||(r.tipo||'').toLowerCase().includes(q));
+  if(activeFilter) list = list.filter(r=>r.tipo===activeFilter);
 
-  const badge = document.getElementById('countBadge');
-  if (badge) badge.textContent = data.length ? `${data.length} restaurante${data.length!==1?'s':''}` : '';
+  if(sortMode==='nota') list.sort((a,b)=>(calcAvg(b.criterios)||0)-(calcAvg(a.criterios)||0));
+  else if(sortMode==='az') list.sort((a,b)=>a.nome.localeCompare(b.nome,'pt'));
+  // 'recentes' já vem ordenado do Firestore
 
   const cont = document.getElementById('listContainer');
-  if (!cont) return;
-  if (list.length === 0) {
-    cont.innerHTML = `<div class="empty">
-      <span class="empty-icon">${q||activeFilter?'🔍':'🍽'}</span>
-      <h2>${q||activeFilter?'Nenhum resultado':'Ainda sem avaliações'}</h2>
-      <p>${q||activeFilter?'Tente outro termo ou filtro.':'Clique em <strong>+ Novo</strong> para registrar o primeiro restaurante!'}</p>
-    </div>`;
+  if(!cont) return;
+  if(!list.length){
+    cont.innerHTML=`<div class="empty"><span class="empty-icon">${q||activeFilter?'🔍':'🍽'}</span><h2>${q||activeFilter?'Nenhum resultado':'Ainda sem avaliações'}</h2><p>${q||activeFilter?'Tente outro termo ou filtro.':'Clique em <strong>+ Novo</strong> para começar!'}</p></div>`;
     return;
   }
 
   cont.innerHTML = list.map(r => {
-    const avg = calcAvg(r.criterios);
-    const avgStr = avg !== null ? avg.toFixed(1) : '—';
-    const critsHTML = CRITERIOS.filter(c => r.criterios?.[c.id]?.score > 0).map(c => {
-      const cr = r.criterios[c.id];
-      return `<div class="crit-item">
-        <div class="crit-label">${c.label}</div>
-        <div class="stars-row">${starsHTML(cr.score)}</div>
-        ${cr.comment ? `<div class="crit-note">"${cr.comment}"</div>` : ''}
-      </div>`;
+    const avg = calcAvg(r.criterios), avgStr = avg!==null?avg.toFixed(1):'—';
+    const exp = expandedIds.has(r.firestoreId);
+    const metaTags = [r.tipo,r.local,r.data?new Date(r.data+'T12:00').toLocaleDateString('pt-BR'):null,r.quem].filter(Boolean).map(t=>`<span class="meta-tag">${t}</span>`).join('');
+
+    // links
+    const links = [];
+    if(r.maps) links.push(`<a class="link-btn" href="${r.maps}" target="_blank">📍 Maps</a>`);
+    if(r.waze) links.push(`<a class="link-btn" href="${r.waze}" target="_blank">🧭 Waze</a>`);
+    const linksHTML = links.length ? `<div class="card-links">${links.join('')}</div>` : '';
+
+    // fotos
+    let fotosHTML = '';
+    if(r.fotos && r.fotos.length) {
+      const items = r.fotos.map(f => {
+        // tenta gerar thumb direto para Drive; caso contrário mostra link
+        const driveMatch = f.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{25,})/);
+        if(driveMatch) {
+          const thumb = `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w200`;
+          return `<img class="photo-thumb" src="${thumb}" loading="lazy" onclick="openLightbox('${thumb}')" alt="foto" />`;
+        }
+        return `<a class="photo-link-tag" href="${f}" target="_blank">📷 Ver foto</a>`;
+      }).join('');
+      fotosHTML = `<div class="photo-strip">${items}</div>`;
+    }
+
+    // criterios
+    const critsHTML = CRITERIOS.filter(c=>r.criterios?.[c.id]?.score>0).map(c=>{
+      const cr=r.criterios[c.id];
+      return `<div class="crit-item"><div class="crit-label">${c.label}</div><div class="stars-row">${starsHTML(cr.score)}</div>${cr.comment?`<div class="crit-note">"${cr.comment}"</div>`:''}</div>`;
     }).join('');
-    const metaTags = [r.tipo, r.local, r.data ? new Date(r.data+'T12:00').toLocaleDateString('pt-BR') : null, r.quem].filter(Boolean).map(t=>`<span class="meta-tag">${t}</span>`).join('');
-    return `<div class="rest-card">
-      <div class="card-top">
+
+    return `<div class="rest-card" id="card-${r.firestoreId}">
+      <div class="card-summary" onclick="toggleCard('${r.firestoreId}')">
         <div class="card-info">
           <h2>${r.nome}</h2>
           <div class="card-meta">${metaTags}</div>
         </div>
-        <div class="score-circle ${scoreClass(avg)}">
-          <span class="num">${avgStr}</span><span class="den">/3</span>
-        </div>
+        <div class="score-circle ${scoreClass(avg)}"><span class="num">${avgStr}</span><span class="den">/3</span></div>
+        <span class="chevron${exp?' open':''}">▼</span>
       </div>
-      ${critsHTML ? `<div class="card-criteria">${critsHTML}</div>` : ''}
-      <div class="card-actions">
-        <button class="btn-sm" onclick="editEntry('${r.firestoreId}')">✏ Editar</button>
-        <button class="btn-sm danger" onclick="deleteEntry('${r.firestoreId}')">Excluir</button>
+      <div class="card-details${exp?' open':''}">
+        ${linksHTML}
+        ${fotosHTML}
+        ${critsHTML?`<div class="card-criteria">${critsHTML}</div>`:''}
+        <div class="card-actions">
+          <button class="btn-sm" onclick="editEntry('${r.firestoreId}')">✏ Editar</button>
+          <button class="btn-sm danger" onclick="deleteEntry('${r.firestoreId}')">Excluir</button>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
-window.setFilter = function(t) { activeFilter = t; render(); }
+window.toggleCard = function(id) {
+  if(expandedIds.has(id)) expandedIds.delete(id); else expandedIds.add(id);
+  render();
+}
+window.setFilter = t => { activeFilter=t; render(); }
+window.setSort   = s => { sortMode=s; render(); }
+
+// ── LIGHTBOX ──────────────────────────────────────────────
+window.openLightbox = function(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+window.closeLightbox = () => document.getElementById('lightbox').classList.remove('open');
 
 // ── MODAL ─────────────────────────────────────────────────
 window.openModal = function(r) {
   editId = r ? r.firestoreId : null;
   document.getElementById('modalTitle').textContent = r ? 'Editar avaliação' : 'Novo restaurante';
-  document.getElementById('fNome').value = r?.nome || '';
+  document.getElementById('fNome').value  = r?.nome  || '';
   document.getElementById('fLocal').value = r?.local || '';
-  document.getElementById('fTipo').value = r?.tipo || '';
-  document.getElementById('fData').value = r?.data || new Date().toISOString().split('T')[0];
-  document.getElementById('fQuem').value = r?.quem || '';
+  document.getElementById('fTipo').value  = r?.tipo  || '';
+  document.getElementById('fData').value  = r?.data  || new Date().toISOString().split('T')[0];
+  document.getElementById('fQuem').value  = r?.quem  || '';
+  document.getElementById('fMaps').value  = r?.maps  || '';
+  document.getElementById('fWaze').value  = r?.waze  || '';
+  document.getElementById('fFotos').value = (r?.fotos||[]).join('\n');
   buildCritGrid(r?.criterios);
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-window.closeModal = function() {
+window.closeModal = () => {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
   editId = null;
 }
-window.overlayClick = function(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-window.editEntry = function(id) {
-  const r = data.find(x => x.firestoreId === id);
-  if (r) openModal(r);
-}
-window.deleteEntry = async function(id) {
-  if (!confirm('Excluir esta avaliação?')) return;
-  await deleteDoc(doc(db, 'restaurantes', id));
+window.overlayClick = e => { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+window.editEntry = id => { const r=data.find(x=>x.firestoreId===id); if(r) openModal(r); }
+window.deleteEntry = async id => {
+  if(!confirm('Excluir esta avaliação?')) return;
+  await deleteDoc(doc(db,'restaurantes',id));
 }
 
 // ── CRITERIA FORM ─────────────────────────────────────────
@@ -471,11 +552,11 @@ function buildCritGrid(existing) {
   const grid = document.getElementById('critGrid');
   starState = {};
   grid.innerHTML = CRITERIOS.map(c => {
-    const ex = existing?.[c.id] || {};
-    starState[c.id] = ex.score || 0;
+    const ex = existing?.[c.id]||{};
+    starState[c.id] = ex.score||0;
     return `<div class="crit-form-item">
       <div class="crit-form-label">${c.label}</div>
-      <div style="display:flex;align-items:center;gap:6px;">
+      <div style="display:flex;align-items:center;gap:4px">
         <div class="star-picker" id="picker-${c.id}">
           ${[1,2,3].map(i=>`<button type="button" class="star-btn${(ex.score||0)>=i?' on':''}" onclick="setStar('${c.id}',${i})">★</button>`).join('')}
         </div>
@@ -485,50 +566,40 @@ function buildCritGrid(existing) {
     </div>`;
   }).join('');
 }
-window.setStar = function(id, val) {
-  starState[id] = val;
-  document.getElementById('picker-'+id).querySelectorAll('.star-btn').forEach((btn,i) => {
-    btn.classList.toggle('on', i < val);
-  });
+window.setStar = (id,val) => {
+  starState[id]=val;
+  document.getElementById('picker-'+id).querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i<val));
 }
 
 // ── SAVE ──────────────────────────────────────────────────
 window.saveEntry = async function() {
   const nome = document.getElementById('fNome').value.trim();
-  if (!nome) { document.getElementById('fNome').focus(); alert('Informe o nome do restaurante.'); return; }
-  setSyncStatus('yellow', 'Salvando...');
-  const criterios = {};
-  CRITERIOS.forEach(c => {
-    const score = starState[c.id] || 0;
-    const comment = document.getElementById('cc-'+c.id)?.value.trim() || '';
-    if (score || comment) criterios[c.id] = { score, comment };
+  if(!nome){document.getElementById('fNome').focus();alert('Informe o nome do restaurante.');return;}
+  setSyncStatus('yellow','Salvando...');
+  const criterios={};
+  CRITERIOS.forEach(c=>{
+    const score=starState[c.id]||0, comment=document.getElementById('cc-'+c.id)?.value.trim()||'';
+    if(score||comment) criterios[c.id]={score,comment};
   });
+  const fotos = document.getElementById('fFotos').value.split('\n').map(s=>s.trim()).filter(Boolean);
   const entry = {
-    nome,
+    nome, criterios, _token: FIRESTORE_TOKEN, updatedAt: Date.now(),
     local: document.getElementById('fLocal').value.trim(),
-    tipo: document.getElementById('fTipo').value,
-    data: document.getElementById('fData').value,
-    quem: document.getElementById('fQuem').value,
-    criterios,
-    _token: FIRESTORE_TOKEN,
-    updatedAt: Date.now(),
+    tipo:  document.getElementById('fTipo').value,
+    data:  document.getElementById('fData').value,
+    quem:  document.getElementById('fQuem').value,
+    maps:  document.getElementById('fMaps').value.trim(),
+    waze:  document.getElementById('fWaze').value.trim(),
+    fotos,
   };
   try {
-    if (editId) {
-      await updateDoc(doc(db, 'restaurantes', editId), entry);
-    } else {
-      entry.createdAt = Date.now();
-      await addDoc(collection(db, 'restaurantes'), entry);
-    }
+    if(editId) { await updateDoc(doc(db,'restaurantes',editId),entry); }
+    else { entry.createdAt=Date.now(); await addDoc(collection(db,'restaurantes'),entry); }
     closeModal();
-  } catch(e) {
-    console.error(e);
-    setSyncStatus('red', 'Erro ao salvar: ' + e.message);
-    alert('Erro ao salvar: ' + e.message);
-  }
+  } catch(e) { console.error(e); setSyncStatus('red','Erro ao salvar.'); alert('Erro: '+e.message); }
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeLightbox();}});
 </script>
 </body>
 </html>
