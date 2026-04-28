@@ -264,7 +264,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── CONFIGURAÇÕES — altere a senha aqui ──────────────────
 // ATENÇÃO: troque ramboramborambo pela senha que quiser usar
@@ -337,7 +337,6 @@ function startFirestore() {
   setSyncStatus('yellow', 'Conectando...');
   const q = query(
     collection(db, 'restaurantes'),
-    where('_token', '==', FIRESTORE_TOKEN),
     orderBy('createdAt', 'desc')
   );
   unsubscribe = onSnapshot(q,
