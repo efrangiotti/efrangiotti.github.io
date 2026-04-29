@@ -240,7 +240,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
   <header class="site-header">
     <div class="header-title">
       <h1>Nosso <em>Diário</em> de Restaurantes</h1>
-      <p>avaliações a dois</p>
+      <p id="headerSubtitle">avaliações a dois</p>
     </div>
     <div class="theme-picker" id="themePicker"></div>
   </header>
@@ -248,7 +248,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
   <div class="container">
     <div class="toolbar">
       <input class="search-input" id="searchInput" placeholder="Buscar restaurante..." oninput="render()" />
-      <button class="btn btn-primary" onclick="openModal()">+ Novo</button>
+      <button class="btn btn-primary" id="btnNovo" onclick="openModal()" style="display:none">+ Novo</button>
     </div>
 
     <div class="sync-bar">
@@ -357,6 +357,9 @@ const THEMES = ['classico','noite','verde','rosé'];
 let data = [], editId = null, starState = {}, activeFilter = '', sortMode = 'recentes';
 let expandedIds = new Set();
 
+// ── MODO PÚBLICO vs ADMIN ─────────────────────────────────
+const IS_ADMIN_MODE = location.search.includes('admin');
+
 // ── TEMA ─────────────────────────────────────────────────
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
@@ -379,6 +382,7 @@ window.doLogin = function() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appScreen').classList.add('visible');
     buildThemePicker();
+    document.getElementById('btnNovo').style.display = '';
     startFirestore();
   } else {
     err.classList.add('show');
@@ -387,12 +391,23 @@ window.doLogin = function() {
     setTimeout(() => err.classList.remove('show'), 3000);
   }
 }
-if (sessionStorage.getItem('diario_auth') === 'ok') {
+
+if (!IS_ADMIN_MODE) {
+  // Modo público: pula login, entra direto sem permissão de edição
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').classList.add('visible');
+  buildThemePicker();
+  startFirestore();
+  // mark as read-only for guests
+  document.getElementById('headerSubtitle').textContent = 'modo visualização';
+} else if (sessionStorage.getItem('diario_auth') === 'ok') {
+  // Modo admin: sessão já ativa
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appScreen').classList.add('visible');
   buildThemePicker();
   startFirestore();
 }
+// else: admin mode, sessão não ativa → tela de login aparece normalmente
 
 // ── FIRESTORE ─────────────────────────────────────────────
 function startFirestore() {
@@ -496,10 +511,10 @@ window.render = function() {
         ${linksHTML}
         ${fotosHTML}
         ${critsHTML?`<div class="card-criteria">${critsHTML}</div>`:''}
-        <div class="card-actions">
+        ${IS_ADMIN_MODE ? `<div class="card-actions">
           <button class="btn-sm" onclick="editEntry('${r.firestoreId}')">✏ Editar</button>
           <button class="btn-sm danger" onclick="deleteEntry('${r.firestoreId}')">Excluir</button>
-        </div>
+        </div>` : ''}
       </div>
     </div>`;
   }).join('');
