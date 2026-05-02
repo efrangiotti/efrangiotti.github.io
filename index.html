@@ -163,7 +163,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
 
 .card-criteria { padding: 0.75rem 1.1rem 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 7px; }
 .crit-item { background: var(--bg); border-radius: 8px; padding: 9px 11px; border: 1px solid var(--border); }
-.crit-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.crit-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.peso-badge { font-size: 9px; padding: 1px 5px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px; font-weight: 500; }
+.peso-3 { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
+.peso-2 { background: var(--green-light); color: var(--green); border: 1px solid var(--green); }
+.peso-1 { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
 .stars-row { display: flex; gap: 3px; margin-bottom: 3px; }
 .star { font-size: 13px; line-height: 1; }
 .crit-note { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.4; }
@@ -197,7 +201,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
 
 .crit-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 10px; }
 .crit-form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 11px; }
-.crit-form-label { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 7px; }
+.crit-form-label { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 7px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .star-picker { display: flex; gap: 4px; }
 .star-btn { width: 30px; height: 30px; font-size: 17px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
 .star-btn.on { background: var(--accent-light); border-color: var(--accent); }
@@ -346,10 +350,15 @@ const fireApp = initializeApp(firebaseConfig);
 const db = getFirestore(fireApp);
 
 const CRITERIOS = [
-  {id:'comida',label:'🍴 Comida'},{id:'atendimento',label:'🙋 Atendimento'},
-  {id:'espera',label:'⏱ Espera'},{id:'preco',label:'💰 Preço/Custo-benefício'},
-  {id:'ambiente',label:'✨ Ambiente'},{id:'sobremesa',label:'🍮 Sobremesa'},
-  {id:'estacionamento',label:'🚗 Estacionamento'},{id:'bebidas',label:'🍷 Bebidas'},
+  // peso 3 = essencial · peso 2 = importante · peso 1 = secundário
+  {id:'comida',        label:'🍴 Comida',               peso:3},
+  {id:'atendimento',   label:'🙋 Atendimento',           peso:2},
+  {id:'preco',         label:'💰 Preço/Custo-benefício', peso:2},
+  {id:'espera',        label:'⏱ Espera',                peso:2},
+  {id:'ambiente',      label:'✨ Ambiente',              peso:1},
+  {id:'sobremesa',     label:'🍮 Sobremesa',             peso:1},
+  {id:'estacionamento',label:'🚗 Estacionamento',        peso:1},
+  {id:'bebidas',       label:'🍷 Bebidas',               peso:1},
 ];
 
 const THEMES = ['classico','noite','verde','rosé'];
@@ -431,8 +440,12 @@ function setSyncStatus(s,m) {
 const scoreClass = avg => avg===null?'score-gray':avg>=2.5?'score-green':avg>=1.5?'score-amber':'score-red';
 const starsHTML  = s => [1,2,3].map(i=>`<span class="star">${i<=s?'★':'☆'}</span>`).join('');
 function calcAvg(cr) {
-  const v = Object.values(cr||{}).map(c=>c.score).filter(s=>s>0);
-  return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
+  let sumPeso = 0, sumNota = 0;
+  CRITERIOS.forEach(c => {
+    const score = cr?.[c.id]?.score;
+    if (score > 0) { sumNota += score * c.peso; sumPeso += c.peso; }
+  });
+  return sumPeso > 0 ? sumNota / sumPeso : null;
 }
 
 // ── RENDER ────────────────────────────────────────────────
@@ -495,7 +508,8 @@ window.render = function() {
     // criterios
     const critsHTML = CRITERIOS.filter(c=>r.criterios?.[c.id]?.score>0).map(c=>{
       const cr=r.criterios[c.id];
-      return `<div class="crit-item"><div class="crit-label">${c.label}</div><div class="stars-row">${starsHTML(cr.score)}</div>${cr.comment?`<div class="crit-note">"${cr.comment}"</div>`:''}</div>`;
+      const pesoLabel = c.peso===3?'<span class="peso-badge peso-3">essencial</span>':c.peso===2?'<span class="peso-badge peso-2">importante</span>':'';
+      return `<div class="crit-item"><div class="crit-label">${c.label} ${pesoLabel}</div><div class="stars-row">${starsHTML(cr.score)}</div>${cr.comment?`<div class="crit-note">"${cr.comment}"</div>`:''}</div>`;
     }).join('');
 
     return `<div class="rest-card" id="card-${r.firestoreId}">
@@ -569,8 +583,9 @@ function buildCritGrid(existing) {
   grid.innerHTML = CRITERIOS.map(c => {
     const ex = existing?.[c.id]||{};
     starState[c.id] = ex.score||0;
+    const badge = c.peso===3?'<span class="peso-badge peso-3">essencial</span>':c.peso===2?'<span class="peso-badge peso-2">importante</span>':'<span class="peso-badge peso-1">secundário</span>';
     return `<div class="crit-form-item">
-      <div class="crit-form-label">${c.label}</div>
+      <div class="crit-form-label">${c.label} ${badge}</div>
       <div style="display:flex;align-items:center;gap:4px">
         <div class="star-picker" id="picker-${c.id}">
           ${[1,2,3].map(i=>`<button type="button" class="star-btn${(ex.score||0)>=i?' on':''}" onclick="setStar('${c.id}',${i})">★</button>`).join('')}
