@@ -165,6 +165,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
 .crit-item { background: var(--bg); border-radius: 8px; padding: 9px 11px; border: 1px solid var(--border); }
 .crit-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .peso-badge { font-size: 9px; padding: 1px 5px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px; font-weight: 500; }
+.peso-4 { background: #FDE8C8; color: #A0600A; border: 1px solid #E8A020; }
 .peso-3 { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
 .peso-2 { background: var(--green-light); color: var(--green); border: 1px solid var(--green); }
 .peso-1 { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
@@ -217,6 +218,19 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
 .lightbox img { max-width: 100%; max-height: 90vh; border-radius: 8px; object-fit: contain; }
 .lightbox-close { position: absolute; top: 1rem; right: 1rem; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
+/* FOOTER NOTE */
+.footer-note { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; }
+.footer-note details { display: inline-block; }
+.footer-note summary { font-size: 11px; color: var(--muted); cursor: pointer; letter-spacing: 0.3px; list-style: none; opacity: 0.55; transition: opacity 0.2s; user-select: none; }
+.footer-note summary::-webkit-details-marker { display: none; }
+.footer-note summary:hover { opacity: 1; }
+.footer-note summary::after { content: ' ↓'; font-size: 9px; }
+details[open] > summary::after { content: ' ↑'; }
+.peso-table { margin-top: 0.75rem; font-size: 11px; color: var(--muted); border-collapse: collapse; width: 100%; max-width: 380px; text-align: left; }
+.peso-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.peso-table tr:last-child td { border-bottom: none; }
+.peso-table .col-peso { text-align: right; font-weight: 600; color: var(--ink); opacity: 0.65; white-space: nowrap; }
+
 @media (max-width: 500px) {
   .form-row { grid-template-columns: 1fr; }
   .crit-form-grid { grid-template-columns: 1fr; }
@@ -262,6 +276,19 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
 
     <div class="controls" id="controls"></div>
     <div id="listContainer"></div>
+
+  <div class="footer-note">
+    <details>
+      <summary>como calculamos a nota?</summary>
+      <table class="peso-table">
+        <tr><td>🍴 Comida</td><td class="col-peso">peso ×4 — essencial</td></tr>
+        <tr><td>🙋 Atendimento · ⏱ Espera</td><td class="col-peso">peso ×3 — importante</td></tr>
+        <tr><td>💰 Preço · ✨ Ambiente</td><td class="col-peso">peso ×2 — relevante</td></tr>
+        <tr><td>🍮 Sobremesa · 🚗 Estacionamento · 🍷 Bebidas</td><td class="col-peso">peso ×1 — secundário</td></tr>
+      </table>
+    </details>
+  </div>
+
   </div>
 </div>
 
@@ -350,12 +377,12 @@ const fireApp = initializeApp(firebaseConfig);
 const db = getFirestore(fireApp);
 
 const CRITERIOS = [
-  // peso 3 = essencial · peso 2 = importante · peso 1 = secundário
-  {id:'comida',        label:'🍴 Comida',               peso:3},
-  {id:'atendimento',   label:'🙋 Atendimento',           peso:2},
+  // peso 4 = essencial · peso 3 = muito importante · peso 2 = importante · peso 1 = secundário
+  {id:'comida',        label:'🍴 Comida',               peso:4},
+  {id:'atendimento',   label:'🙋 Atendimento',           peso:3},
+  {id:'espera',        label:'⏱ Espera',                peso:3},
   {id:'preco',         label:'💰 Preço/Custo-benefício', peso:2},
-  {id:'espera',        label:'⏱ Espera',                peso:2},
-  {id:'ambiente',      label:'✨ Ambiente',              peso:1},
+  {id:'ambiente',      label:'✨ Ambiente',              peso:2},
   {id:'sobremesa',     label:'🍮 Sobremesa',             peso:1},
   {id:'estacionamento',label:'🚗 Estacionamento',        peso:1},
   {id:'bebidas',       label:'🍷 Bebidas',               peso:1},
@@ -508,7 +535,7 @@ window.render = function() {
     // criterios
     const critsHTML = CRITERIOS.filter(c=>r.criterios?.[c.id]?.score>0).map(c=>{
       const cr=r.criterios[c.id];
-      const pesoLabel = c.peso===3?'<span class="peso-badge peso-3">essencial</span>':c.peso===2?'<span class="peso-badge peso-2">importante</span>':'';
+      const pesoLabel = c.peso===4?'<span class="peso-badge peso-4">essencial</span>':c.peso===3?'<span class="peso-badge peso-3">importante</span>':c.peso===2?'<span class="peso-badge peso-2">relevante</span>':'';
       return `<div class="crit-item"><div class="crit-label">${c.label} ${pesoLabel}</div><div class="stars-row">${starsHTML(cr.score)}</div>${cr.comment?`<div class="crit-note">"${cr.comment}"</div>`:''}</div>`;
     }).join('');
 
@@ -583,7 +610,7 @@ function buildCritGrid(existing) {
   grid.innerHTML = CRITERIOS.map(c => {
     const ex = existing?.[c.id]||{};
     starState[c.id] = ex.score||0;
-    const badge = c.peso===3?'<span class="peso-badge peso-3">essencial</span>':c.peso===2?'<span class="peso-badge peso-2">importante</span>':'<span class="peso-badge peso-1">secundário</span>';
+    const badge = c.peso===4?'<span class="peso-badge peso-4">essencial</span>':c.peso===3?'<span class="peso-badge peso-3">importante</span>':c.peso===2?'<span class="peso-badge peso-2">relevante</span>':'<span class="peso-badge peso-1">secundário</span>';
     return `<div class="crit-form-item">
       <div class="crit-form-label">${c.label} ${badge}</div>
       <div style="display:flex;align-items:center;gap:4px">
